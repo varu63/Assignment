@@ -1,0 +1,34 @@
+version: "3.9"
+
+services:
+  backend:
+    build: ./backend
+    container_name: groweasy-backend
+
+    ports:
+      - "5000:5000"
+
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+
+    environment:
+      PORT: 5000
+      GEMINI_API_KEY: YOUR_GEMINI_API_KEY
+
+  frontend:
+    build: ./frontend
+    container_name: groweasy-frontend
+
+    ports:
+      - "3000:3000"
+
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+    environment:
+      NEXT_PUBLIC_API_URL: http://backend:5000/api
+
+    depends_on:
+      - backend
