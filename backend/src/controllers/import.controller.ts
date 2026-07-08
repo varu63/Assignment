@@ -5,28 +5,33 @@ export const importCsv = async (
   req: Request,
   res: Response
 ): Promise<void> => {
+  console.log("=== importCsv called ===");
+
   try {
     if (!req.file) {
-      res.status(400).json({
+      console.log("No file received");
+      return res.status(400).json({
         success: false,
         message: "CSV file is required.",
       });
-      return;
     }
+
+    console.log("File received:", req.file.originalname);
+    console.log("Buffer size:", req.file.buffer.length);
 
     const result = await processImport(req.file.buffer);
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Import completed successfully.",
       ...result,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Controller error:", error);
 
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
-      message: "Failed to import CSV.",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
 };
